@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mega Elite Analytics - Sistema de Fechamento Profissional</title>
+    <title>Mega Elite Analytics - Sistema de Gestão de Apostas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -11,13 +11,12 @@
         }
     </script>
     <style>
-        /* Paleta de Cores dos Quadrantes (Matriz de Seleção) */
-        .quadrante-1 { background-color: #450a0a; color: #fecaca; } /* Vermelho Profundo */
-        .quadrante-2 { background-color: #3b0764; color: #e9d5ff; } /* Roxo Profundo */
-        .quadrante-3 { background-color: #1e3a8a; color: #bfdbfe; } /* Azul Profundo */
-        .quadrante-4 { background-color: #451a03; color: #fde68a; } /* Âmbar Profundo */
+        /* Paleta de Cores dos Quadrantes */
+        .quadrante-1 { background-color: #450a0a; color: #fecaca; } 
+        .quadrante-2 { background-color: #3b0764; color: #e9d5ff; } 
+        .quadrante-3 { background-color: #1e3a8a; color: #bfdbfe; } 
+        .quadrante-4 { background-color: #451a03; color: #fde68a; }
 
-        /* Estado Selecionado */
         .numero-selecionado {
             background-color: #22c55e !important;
             color: #052e16 !important;
@@ -26,22 +25,31 @@
             box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
         }
 
-        /* Estilo da Carta de Jogo (Card Gamificado) */
+        /* Estilo da Carta de Jogo */
         .cartao-estratega {
             background: linear-gradient(145deg, #1e293b, #0f172a);
             border: 2px solid #334155;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             border-radius: 2.5rem;
         }
-        .cartao-estratega:hover {
+
+        /* ESTADO INATIVO / USADO */
+        .cartao-estratega.usado {
+            filter: grayscale(0.9) brightness(0.6);
+            opacity: 0.7;
+            pointer-events: auto;
+            transform: scale(0.98);
+            border-color: #1e293b;
+        }
+
+        .cartao-estratega:hover:not(.usado) {
             transform: translateY(-5px);
             border-color: #22c55e;
             box-shadow: 0 10px 30px -10px rgba(34, 197, 94, 0.3);
         }
 
-        /* Grade do Volante nos Cartões */
         .grade-volante {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -52,7 +60,6 @@
             border-radius: 12px;
         }
 
-        /* Linhas Divisórias de Quadrantes nos Volantes */
         .linha-divisoria-horizontal {
             position: absolute;
             top: 50%;
@@ -76,7 +83,6 @@
             pointer-events: none;
         }
 
-        /* Dezenas dentro do Volante do Card */
         .dezena-volante {
             aspect-ratio: 1;
             display: flex;
@@ -94,18 +100,15 @@
             border-radius: 2px;
         }
 
-        /* Barras de Status de Gamificação */
         .container-barra-status { background: #020617; height: 10px; border-radius: 99px; overflow: hidden; border: 1px solid #1e293b; }
         .preenchimento-ataque { background: linear-gradient(90deg, #ef4444, #f97316); height: 100%; transition: width 1.5s; }
         .preenchimento-defesa { background: linear-gradient(90deg, #3b82f6, #06b6d4); height: 100%; transition: width 1.5s; }
 
-        /* Barra de Carregamento de Frequência Real */
         .barra-frequencia-container { width: 100%; background-color: #0f172a; border-radius: 99px; height: 8px; margin-top: 6px; overflow: hidden; border: 1px solid #1e293b; }
-        .barra-frequencia-progresso { height: 100%; background: linear-gradient(90deg, #064e3b 0%, #22c55e 100%); border-radius: 99px; transition: width 1.5s cubic-bezier(0.1, 0, 0, 1); }
+        .barra-frequencia-progresso { height: 100%; background: linear-gradient(90deg, #064e3b 0%, #22c55e 100%); border-radius: 99px; transition: width 1.5s; }
 
         .bloco-estatistico { border-left: 4px solid #3b82f6; background: #161e2e; padding: 14px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #1e293b; }
         
-        /* Personalização da Scrollbar */
         .barra-rolagem-customizada::-webkit-scrollbar { width: 6px; }
         .barra-rolagem-customizada::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
@@ -116,11 +119,11 @@
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-2xl font-black italic text-green-500 tracking-tighter uppercase">Mega<span class="text-white">Elite</span> Tactics</h1>
-                <p class="text-[10px] text-green-700 font-bold uppercase tracking-[0.2em]">Inteligência de Dados Concurso 2954</p>
+                <p class="text-[10px] text-green-700 font-bold uppercase tracking-[0.2em]">Gestão de Apostas Concurso 2954</p>
             </div>
             <div class="flex flex-wrap justify-center gap-3">
-                <button onclick="gerarCartasFechamento()" class="bg-green-600 px-8 py-2 rounded-full font-bold text-sm hover:bg-green-500 transition-all shadow-lg shadow-green-900/40 active:scale-95">FORJAR CARTAS</button>
-                <button onclick="ativarSugestaoHistorica()" class="bg-blue-600 px-5 py-2 rounded-full font-bold text-xs hover:bg-blue-500 transition-all text-white uppercase tracking-tighter">Ranking Top 20 %</button>
+                <button onclick="gerarCartasFechamento()" class="bg-green-600 px-8 py-2 rounded-full font-bold text-sm hover:bg-green-500 transition-all shadow-lg active:scale-95">FORJAR CARTAS</button>
+                <button onclick="ativarSugestaoHistorica()" class="bg-blue-600 px-5 py-2 rounded-full font-bold text-xs hover:bg-blue-500 transition-all">Ranking Top 20 %</button>
                 <button onclick="limparSistema()" class="text-slate-500 hover:text-white px-2 text-xs uppercase font-bold transition-colors">Limpar Tudo</button>
             </div>
         </div>
@@ -131,18 +134,10 @@
             
             <div class="lg:col-span-5">
                 <div class="bg-slate-900 p-8 rounded-[2rem] border border-slate-800 sticky top-28 shadow-2xl">
-                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2">
-                        <span class="w-2 h-6 bg-green-500 rounded-full"></span>
-                        Matriz de Seleção Geográfica
-                    </h2>
-                    
-                    <div id="volante-principal" class="grid grid-cols-10 gap-1.5 mb-8">
-                        </div>
-                    
-                    <div id="painel-analytics" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <h3 class="text-[10px] font-black text-slate-500 mb-4 uppercase tracking-[0.3em] border-b border-slate-800 pb-2">Racional das Dezenas de Elite</h3>
-                        <div id="lista-detalhada-estatisticas" class="max-h-[450px] overflow-y-auto pr-2 barra-rolagem-customizada space-y-4">
-                            </div>
+                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2">Matriz de Seleção Geográfica</h2>
+                    <div id="volante-principal" class="grid grid-cols-10 gap-1.5 mb-8"></div>
+                    <div id="painel-analytics" class="hidden animate-in fade-in duration-700">
+                        <div id="lista-detalhada-estatisticas" class="max-h-[450px] overflow-y-auto pr-2 barra-rolagem-customizada space-y-4"></div>
                     </div>
                 </div>
             </div>
@@ -150,11 +145,10 @@
             <div class="lg:col-span-7">
                 <div id="container-cartas-geradas" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="col-span-full py-32 text-center border-2 border-dashed border-slate-800 rounded-[3rem] opacity-30 italic">
-                        <p class="text-xl">Selecione suas dezenas ou use o Ranking Top 20 para forjar as cartas de estratégia.</p>
+                        <p class="text-xl">Gere as cartas para gerenciar suas apostas.</p>
                     </div>
                 </div>
             </div>
-
         </div>
     </main>
 
@@ -162,28 +156,27 @@
         let dezenasSelecionadas = new Set();
         const TOTAL_CONCURSOS_HISTORICO = 2954;
 
-        // Base de Dados Sophisticated v5.0
         const bancoDeDadosElite = [
-            { numero: 10, quadrante: 2, frequencia: 340, racional: "<b>Polaridade Gravitacional:</b> Atua como atrator central. Apresenta o menor desvio padrão de frequência, tornando-a a dezena mais estável historicamente." },
-            { numero: 53, quadrante: 3, frequencia: 332, racional: "<b>Saturação Crítica:</b> Recordista em concursos especiais. Atua como suporte base para o quadrante inferior esquerdo com alta taxa de retorno." },
-            { numero: 05, quadrante: 1, frequencia: 319, racional: "<b>Âncora de Início:</b> Líder do Q1. Estabiliza a soma nominal da aposta, mantendo-a dentro da curva de probabilidade central (Gauss)." },
-            { numero: 34, quadrante: 3, frequencia: 316, racional: "<b>Eixo de Simetria:</b> Localizada no centro gravitacional do volante. Essencial para fechamentos que buscam equilíbrio de centro." },
-            { numero: 37, quadrante: 4, frequencia: 315, racional: "<b>Dominância Lateral:</b> Líder do Q4. Sua presença costuma anular a saturação de dezenas muito baixas, equilibrando a soma final." },
-            { numero: 33, quadrante: 3, frequencia: 312, racional: "<b>Repetição Estrutural:</b> Número mestre da zona central. Possui o maior índice de 'dobradinhas' (aparição em concursos seguidos)." },
-            { numero: 38, quadrante: 4, frequencia: 312, racional: "<b>Vizinhança Tática:</b> Alta correlação com a dezena 37. Frequentemente compõe o par de encerramento em sorteios equilibrados." },
-            { numero: 17, quadrante: 2, frequencia: 309, racional: "<b>Cluster de Topo:</b> Dezena de média oscilante. Tende a aparecer em agrupamentos ímpares na zona superior direita." },
-            { numero: 32, quadrante: 3, frequencia: 309, racional: "<b>Estabilidade Mediana:</b> Frequentemente compõe trios com as dezenas 33 e 34, reforçando a densidade do Quadrante 3." },
-            { numero: 43, quadrante: 4, frequencia: 308, racional: "<b>Efeito Repique:</b> Dezena explosiva. Após períodos de ausência, costuma reaparecer em ciclos curtos de alta frequência." },
-            { numero: 56, quadrante: 4, frequencia: 307, racional: "<b>Alinhamento de Base:</b> Fundamental para coberturas espaciais na última linha do volante, equilibrando sorteios com números altos." },
-            { numero: 04, quadrante: 1, frequencia: 306, racional: "<b>Paridade de Base:</b> Correlação de 18% com a dezena 05. Suporte vital para colunas pares de abertura no Q1." },
-            { numero: 27, quadrante: 2, frequencia: 306, racional: "<b>Ponto de Inflexão:</b> Localizada na transição de linhas do Q2. Mantém a fluidez da distribuição entre as dezenas 20 e 30." },
-            { numero: 30, quadrante: 2, frequencia: 306, racional: "<b>Fechamento de Linha:</b> Alta incidência em sorteios de colunas fechadas. Recordista de saída na décima coluna." },
-            { numero: 42, quadrante: 3, frequencia: 306, racional: "<b>Compensação de Gap:</b> Dezena resiliente. Mantém a média de saídas mesmo após longos períodos de atraso técnico." },
-            { numero: 44, quadrante: 3, frequencia: 306, racional: "<b>Simetria Geminada:</b> Número duplo que contribui para quebrar padrões de aleatoriedade pura no centro do volante." },
-            { numero: 11, quadrante: 1, frequencia: 305, racional: "<b>Vértice Geométrico:</b> Dezena de transição. Possui o maior índice de retorno em concursos de final ímpar acumulados." },
-            { numero: 35, quadrante: 3, frequencia: 305, racional: "<b>Suporte de Quadrante:</b> Atua na fronteira interna do Q3. Ótima para cruzamento de dados com o centro do volante." },
-            { numero: 46, quadrante: 4, frequencia: 305, racional: "<b>Densidade Inferior:</b> Dezena estratégica para o equilíbrio par do Quadrante 4. Estabiliza jogos com fim alto." },
-            { numero: 23, quadrante: 1, frequencia: 304, racional: "<b>Fluidez Constante:</b> Menor tempo médio de permanência no globo (atraso curto), garantindo rotatividade à matriz." }
+            { numero: 10, quadrante: 2, frequencia: 340, racional: "<b>Polaridade Gravitacional:</b> Atua como atrator central estável." },
+            { numero: 53, quadrante: 3, frequencia: 332, racional: "<b>Saturação Crítica:</b> Recordista em concursos especiais." },
+            { numero: 05, quadrante: 1, frequencia: 319, racional: "<b>Âncora de Início:</b> Estabiliza a soma nominal da aposta." },
+            { numero: 34, quadrante: 3, frequencia: 316, racional: "<b>Eixo de Simetria:</b> Equilíbrio de centro gravitacional." },
+            { numero: 37, quadrante: 4, frequencia: 315, racional: "<b>Dominância Lateral:</b> Líder do Q4, equilibra a soma final." },
+            { numero: 33, quadrante: 3, frequencia: 312, racional: "<b>Repetição Estrutural:</b> Maior índice de dobradinhas." },
+            { numero: 38, quadrante: 4, frequencia: 312, racional: "<b>Vizinhança Tática:</b> Alta correlação com a dezena 37." },
+            { numero: 17, quadrante: 2, frequencia: 309, racional: "<b>Cluster de Topo:</b> Tende a aparecer em agrupamentos ímpares." },
+            { numero: 32, quadrante: 3, frequencia: 309, racional: "<b>Estabilidade Mediana:</b> Reforça a densidade do Q3." },
+            { numero: 43, quadrante: 4, frequencia: 308, racional: "<b>Efeito Repique:</b> Reaparece em ciclos curtos de frequência." },
+            { numero: 56, quadrante: 4, frequencia: 307, racional: "<b>Alinhamento de Base:</b> Fundamental para coberturas da última linha." },
+            { numero: 04, quadrante: 1, frequencia: 306, racional: "<b>Paridade de Base:</b> Suporte vital para colunas pares no Q1." },
+            { numero: 27, quadrante: 2, frequencia: 306, racional: "<b>Ponto de Inflexão:</b> Mantém a fluidez na transição do Q2." },
+            { numero: 30, quadrante: 2, frequencia: 306, racional: "<b>Fechamento de Linha:</b> Recordista de saída na décima coluna." },
+            { numero: 42, quadrante: 3, frequencia: 306, racional: "<b>Compensação de Gap:</b> Dezena resiliente pós-atraso técnico." },
+            { numero: 44, quadrante: 3, frequencia: 306, racional: "<b>Simetria Geminada:</b> Quebra padrões de aleatoriedade pura." },
+            { numero: 11, quadrante: 1, frequencia: 305, racional: "<b>Vértice Geométrico:</b> Retorno alto em concursos acumulados." },
+            { numero: 35, quadrante: 3, frequencia: 305, racional: "<b>Suporte de Quadrante:</b> Ótima para cruzamento com o centro." },
+            { numero: 46, quadrante: 4, frequencia: 305, racional: "<b>Densidade Inferior:</b> Estabiliza jogos com fim alto." },
+            { numero: 23, quadrante: 1, frequencia: 304, racional: "<b>Fluidez Constante:</b> Menor tempo de permanência no globo." }
         ];
 
         function inicializarVolanteSelecao() {
@@ -193,7 +186,7 @@
                 botao.innerText = i.toString().padStart(2, '0');
                 botao.id = `btn-selecao-${i}`;
                 const q = obterQuadrante(i);
-                botao.className = `quadrante-${q} h-9 w-full rounded-lg font-bold text-[11px] transition-all border border-transparent hover:brightness-125 active:scale-90`;
+                botao.className = `quadrante-${q} h-9 w-full rounded-lg font-bold text-[11px] transition-all border border-transparent hover:brightness-125`;
                 botao.onclick = () => alternarDezena(i);
                 volante.appendChild(botao);
             }
@@ -219,52 +212,31 @@
             }
         }
 
-        function ativarSugestaoHistorica() {
-            limparSistema();
-            const painel = document.getElementById('painel-analytics');
-            const lista = document.getElementById('lista-detalhada-estatisticas');
-            painel.classList.remove('hidden');
-            lista.innerHTML = '';
-            
-            bancoDeDadosElite.forEach(item => {
-                alternarDezena(item.numero);
-                const percentualReal = ((item.frequencia / TOTAL_CONCURSOS_HISTORICO) * 100).toFixed(2);
-                
-                lista.innerHTML += `
-                    <div class="bloco-estatistico border-quadrante-${item.quadrante}">
-                        <div class="flex justify-between items-end mb-1">
-                            <span class="text-white font-black text-xs uppercase tracking-tighter">DEZENA ${item.numero.toString().padStart(2,'0')}</span>
-                            <div class="text-right">
-                                <span class="text-green-500 font-mono text-[11px] font-bold">${percentualReal}%</span>
-                                <span class="text-[9px] text-slate-500 block">(${item.frequencia} de ${TOTAL_CONCURSOS_HISTORICO})</span>
-                            </div>
-                        </div>
-                        <div class="barra-frequencia-container">
-                            <div class="barra-frequencia-progresso" style="width: ${percentualReal}%"></div>
-                        </div>
-                        <p class="text-slate-400 text-[10px] leading-relaxed mt-3 italic">${item.racional}</p>
-                    </div>
-                `;
-            });
+        function marcarComoUsado(id) {
+            const card = document.getElementById(`card-${id}`);
+            const btn = document.getElementById(`btn-usar-${id}`);
+            if (card.classList.contains('usado')) {
+                card.classList.remove('usado');
+                btn.innerText = "REGISTRAR APOSTA";
+                btn.classList.replace('bg-slate-700', 'bg-green-600');
+            } else {
+                card.classList.add('usado');
+                btn.innerText = "JOGO REGISTRADO ✓";
+                btn.classList.replace('bg-green-600', 'bg-slate-700');
+            }
         }
 
         function gerarCartasFechamento() {
-            if (dezenasSelecionadas.size < 6) {
-                alert("Selecione pelo menos 6 dezenas para forjar as cartas de estratégia.");
-                return;
-            }
-            
+            if (dezenasSelecionadas.size < 6) return alert("Selecione mais dezenas.");
             const container = document.getElementById('container-cartas-geradas');
             container.innerHTML = '';
             let cartasGeradas = 0;
             
-            // Tentativas para encontrar combinações que respeitam os filtros de eficácia
             while(cartasGeradas < 8) {
                 let jogoAleatorio = Array.from(dezenasSelecionadas).sort(() => Math.random() - 0.5).slice(0, 6).sort((a,b) => a-b);
                 const qtdPares = jogoAleatorio.filter(n => n % 2 === 0).length;
                 const quadrantesPresentes = new Set(jogoAleatorio.map(n => obterQuadrante(n)));
                 
-                // Filtro de Eficácia: Ocupar 3 ou 4 quadrantes E ter paridade equilibrada (2 a 4 pares)
                 if(quadrantesPresentes.size >= 3 && (qtdPares >= 2 && qtdPares <= 4)) {
                     renderizarCarta(jogoAleatorio, cartasGeradas + 1, qtdPares, quadrantesPresentes.size);
                     cartasGeradas++;
@@ -274,22 +246,14 @@
 
         function renderizarCarta(nums, id, pares, totalQuadrantes) {
             const container = document.getElementById('container-cartas-geradas');
-            
-            // Cálculo de Atributos Gamificados
-            // Ataque: Média de 'poder' baseada na presença no Top 20
-            const somaPoder = nums.reduce((acc, n) => {
-                const estatistica = bancoDeDadosElite.find(d => d.numero === n);
-                return acc + (estatistica ? 90 : 40); // 90 para elite, 40 para comum
-            }, 0);
+            const somaPoder = nums.reduce((acc, n) => acc + (bancoDeDadosElite.find(d => d.numero === n) ? 90 : 40), 0);
             const ataqueTotal = Math.round(somaPoder / 6);
-            
-            // Defesa: Equilíbrio de quadrantes e paridade ideal (3P:3I)
-            const bonusParidade = (pares === 3) ? 40 : 25;
-            const defesaTotal = (totalQuadrantes * 15) + bonusParidade;
-            
+            const defesaTotal = (totalQuadrantes * 15) + (pares === 3 ? 40 : 25);
             const somaTotal = nums.reduce((a, b) => a + b, 0);
+            
             const card = document.createElement('div');
-            card.className = "cartao-estratega p-8 shadow-2xl animate-in zoom-in-95 duration-500";
+            card.id = `card-${id}`;
+            card.className = "cartao-estratega p-8 shadow-2xl";
             
             let gridHtml = '<div class="grade-volante"><div class="linha-divisoria-horizontal"></div><div class="linha-divisoria-vertical"></div>';
             for(let i=1; i<=60; i++) {
@@ -301,47 +265,40 @@
             card.innerHTML = `
                 <div class="flex justify-between items-center mb-6">
                     <span class="text-xs font-black text-green-500 italic tracking-tighter uppercase">ESTRATEGISTA #${id}</span>
-                    <div class="bg-green-500/10 px-3 py-1 rounded-full text-[10px] text-green-500 font-bold border border-green-500/20">ELITE TACTICS</div>
+                    <button id="btn-usar-${id}" onclick="marcarComoUsado(${id})" class="bg-green-600 px-4 py-1.5 rounded-full text-[9px] text-white font-bold border border-green-500/20 transition-all hover:scale-105 active:scale-95">REGISTRAR APOSTA</button>
                 </div>
-                
                 ${gridHtml}
-
                 <div class="mt-8 space-y-5">
-                    <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-mono text-slate-300 font-bold uppercase tracking-widest">${nums.join(' · ')}</span>
-                        <span class="text-[10px] text-slate-500">SOMA: ${somaTotal}</span>
-                    </div>
-
+                    <div class="flex justify-between items-center"><span class="text-[11px] font-mono text-slate-300 font-bold uppercase">${nums.join(' · ')}</span><span class="text-[10px] text-slate-500">SOMA: ${somaTotal}</span></div>
                     <div class="space-y-3">
-                        <div>
-                            <div class="flex justify-between text-[10px] font-black mb-1 uppercase tracking-widest"><span>ATAQUE (PODER ESTATÍSTICO)</span><span>${ataqueTotal}%</span></div>
-                            <div class="container-barra-status"><div class="preenchimento-ataque" style="width:${ataqueTotal}%"></div></div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-[10px] font-black mb-1 uppercase tracking-widest"><span>DEFESA (RESILIÊNCIA MATEMÁTICA)</span><span>${defesaTotal}%</span></div>
-                            <div class="container-barra-status"><div class="preenchimento-defesa" style="width:${defesaTotal}%"></div></div>
-                        </div>
-                    </div>
-                    
-                    <div class="p-4 bg-slate-950/50 rounded-2xl border border-slate-800 text-[10px] leading-relaxed text-slate-400 italic">
-                        <b>Racional de Eficácia:</b> Este volante opera com paridade ${pares}P:${6-pares}I e cobertura de ${totalQuadrantes} quadrantes. O ataque é impulsionado pela densidade de dezenas históricas, enquanto a defesa é estabilizada pela soma nominal de ${somaTotal}, mantendo a aposta no centro da Curva de Gauss.
+                        <div><div class="flex justify-between text-[10px] font-black mb-1"><span>ATAQUE</span><span>${ataqueTotal}%</span></div><div class="container-barra-status"><div class="preenchimento-ataque" style="width:${ataqueTotal}%"></div></div></div>
+                        <div><div class="flex justify-between text-[10px] font-black mb-1"><span>DEFESA</span><span>${defesaTotal}%</span></div><div class="container-barra-status"><div class="preenchimento-defesa" style="width:${defesaTotal}%"></div></div></div>
                     </div>
                 </div>
             `;
             container.appendChild(card);
         }
 
+        function ativarSugestaoHistorica() {
+            limparSistema();
+            const painel = document.getElementById('painel-analytics');
+            const lista = document.getElementById('lista-detalhada-estatisticas');
+            painel.classList.remove('hidden');
+            lista.innerHTML = '';
+            bancoDeDadosElite.forEach(item => {
+                alternarDezena(item.numero);
+                const perc = ((item.frequencia / TOTAL_CONCURSOS_HISTORICO) * 100).toFixed(2);
+                lista.innerHTML += `<div class="bloco-estatistico"><div class="flex justify-between items-end mb-1"><span class="text-white font-black text-xs uppercase">DEZENA ${item.numero}</span><span class="text-green-500 font-mono text-[11px] font-bold">${perc}%</span></div><div class="barra-frequencia-container"><div class="barra-frequencia-progresso" style="width: ${perc}%"></div></div><p class="text-slate-400 text-[10px] leading-relaxed mt-3 italic">${item.racional}</p></div>`;
+            });
+        }
+
         function limparSistema() {
             dezenasSelecionadas.clear();
-            document.querySelectorAll('#volante-principal button').forEach(b => b.classList.remove('numero-selecionado'));
-            document.getElementById('container-cartas-geradas').innerHTML = `
-                <div class="col-span-full py-32 text-center border-2 border-dashed border-slate-800 rounded-[3rem] opacity-30 italic">
-                    <p class="text-xl">Selecione suas dezenas ou use o Ranking Top 20 para forjar as cartas de estratégia.</p>
-                </div>`;
+            document.querySelectorAll('#volante-selecao button').forEach(b => b.classList.remove('numero-selecionado'));
+            document.getElementById('container-cartas-geradas').innerHTML = '<div class="col-span-full py-32 text-center border-2 border-dashed border-slate-800 rounded-[3rem] opacity-30 italic"><p class="text-xl">Gere as cartas para gerenciar suas apostas.</p></div>';
             document.getElementById('painel-analytics').classList.add('hidden');
         }
 
-        // Inicialização
         inicializarVolanteSelecao();
     </script>
 </body>
