@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mega-Sena Expert | Dynamic Intelligence</title>
+    <title>Mega-Sena Expert | Analytics Hub</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
@@ -29,73 +29,123 @@
         h1 { font-weight: 700; color: #fff; font-size: 1.3rem; letter-spacing: 4px; margin: 20px 0 5px 0; text-transform: uppercase; text-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
         .subtitle { font-size: 0.6rem; letter-spacing: 2px; margin-bottom: 25px; opacity: 0.5; }
 
+        /* BARRA DE FILTROS COM CONTADORES */
+        .filter-bar {
+            width: 95%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            background: #111827;
+            padding: 8px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-sizing: border-box;
+        }
+
+        .filter-btn {
+            position: relative;
+            padding: 15px 5px;
+            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.02);
+            color: var(--text-global);
+            font-size: 0.6rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-btn .count {
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .filter-btn.active { 
+            background: rgba(16, 185, 129, 0.1); 
+            border-color: var(--primary-led);
+            color: var(--primary-led);
+        }
+
         /* MATRIZ LED */
         .cruz-container {
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
             background: var(--border-matrix); padding: 2px; width: 100vw;
-            box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            box-sizing: border-box;
         }
         .quadrante { background: var(--bg); padding: 12px 6px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
         .dezena {
             aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
             background: #111827; border-radius: 4px; font-size: 0.75rem; 
             border: 1px solid rgba(255,255,255,0.03); color: rgba(255,255,255,0.3);
-            transition: all 0.3s ease;
         }
 
-        /* ESTILOS DE CATEGORIA */
-        .sel-elite { background: #451a03 !important; color: #fbbf24 !important; border-color: #f59e0b; box-shadow: inset 0 0 10px #78350f, 0 0 15px rgba(245, 158, 11, 0.3); font-weight: 700; }
-        .sel-media { background: #1e3a8a !important; color: #60a5fa !important; border-color: #3b82f6; box-shadow: inset 0 0 10px #1e40af, 0 0 15px rgba(59, 130, 246, 0.3); font-weight: 700; }
-        .sel-rara { background: #7f1d1d !important; color: #f87171 !important; border-color: #ef4444; box-shadow: inset 0 0 10px #991b1b, 0 0 15px rgba(239, 68, 68, 0.3); font-weight: 700; }
-        .marcado { background: #064e3b !important; color: #34d399 !important; border-color: #10b981; box-shadow: inset 0 0 10px #065f46, 0 0 18px rgba(16, 185, 129, 0.5); font-weight: 700; }
+        /* CATEGORIAS */
+        .sel-elite { background: #451a03 !important; color: #fbbf24 !important; border-color: #f59e0b; font-weight: 700; }
+        .sel-media { background: #1e3a8a !important; color: #60a5fa !important; border-color: #3b82f6; font-weight: 700; }
+        .sel-rara { background: #7f1d1d !important; color: #f87171 !important; border-color: #ef4444; font-weight: 700; }
+        .marcado { background: #064e3b !important; color: #34d399 !important; border-color: #10b981; font-weight: 700; box-shadow: inset 0 0 10px #065f46; }
 
         .btn-main {
-            width: 85%; margin: 30px 0; padding: 18px;
+            width: 90%; margin: 20px 0; padding: 20px;
             background: #064e3b; border: 1px solid var(--primary-led);
-            border-radius: 8px; font-weight: 600; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;
-            color: #34d399 !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+            border-radius: 12px; font-weight: 700; cursor: pointer;
+            text-transform: uppercase; color: #34d399; font-size: 0.85rem;
         }
 
-        /* AUDITORIA DE VOLANTE */
-        .volante-card { background: var(--card); padding: 20px 0; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; }
+        /* VOLANTE CARD */
+        .volante-card { 
+            background: var(--card); padding: 20px 0; width: 100%; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; 
+            transition: 0.3s ease;
+        }
+        .volante-card.hidden { display: none; }
         .volante-card.usado { opacity: 0.2; filter: grayscale(1); }
         
         .header-jogo { padding: 0 15px; display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.75rem; font-weight: 700; }
-        
         .conf-panel { padding: 0 15px; margin-bottom: 15px; }
-        .conf-bar-bg { height: 6px; background: #020617; border-radius: 3px; overflow: hidden; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .conf-bar-fill { height: 100%; transition: 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67); border-radius: 3px; }
+        .conf-bar-bg { height: 6px; background: #020617; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+        .conf-bar-fill { height: 100%; transition: 1s ease-out; }
         
-        .audit-grid { display: grid; grid-template-columns: 1fr; gap: 6px; }
-        .audit-item { 
-            font-size: 0.65rem; background: rgba(0,0,0,0.25); padding: 7px 10px; 
-            border-radius: 4px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .audit-label { opacity: 0.7; }
-        .audit-value { font-weight: 700; letter-spacing: 0.5px; }
+        .audit-item { font-size: 0.65rem; background: rgba(0,0,0,0.25); padding: 7px 10px; border-radius: 4px; display: flex; justify-content: space-between; margin-bottom: 4px; }
 
-        .btn-usar {
-            width: calc(100% - 30px); margin: 15px 15px 0 15px; padding: 12px; 
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 4px; font-size: 0.7rem; font-weight: 600; color: var(--text-global) !important;
-        }
+        .btn-usar { width: calc(100% - 30px); margin: 15px; padding: 15px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-size: 0.75rem; font-weight: 600; color: var(--text-global); }
 
         @media (min-width: 768px) {
+            .filter-bar { grid-template-columns: repeat(4, 1fr); max-width: 1000px; }
             .jogos-grid { display: grid; grid-template-columns: repeat(2, 1fr); width: 95%; gap: 20px; }
             .cruz-container { width: 420px; border-radius: 8px; margin: 0 auto; }
-            .volante-card { border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
         }
     </style>
 </head>
 <body>
 
-    <h1>Expert Matrix LED</h1>
-    <div class="subtitle">Auditoria com Gradiente de Confiança</div>
+    <h1>Expert Analytics Hub</h1>
+    <div class="subtitle">Segmentação e Volume por Categoria</div>
 
     <div class="cruz-container" id="matriz-main"></div>
 
-    <button class="btn-main" onclick="executarSistema()">Gerar Inteligência Dinâmica</button>
+    <button class="btn-main" onclick="executarSistema()">Processar Lote (24 Jogos)</button>
+
+    <div class="filter-bar" id="filter-bar" style="display: none;">
+        <button class="filter-btn active" id="btn-todos" onclick="filtrarJogos('todos')">
+            <span>Todos</span><span class="count" id="count-todos">0</span>
+        </button>
+        <button class="filter-btn" id="btn-elite" onclick="filtrarJogos('elite')">
+            <span style="color:var(--primary-led)">Elite</span><span class="count" id="count-elite">0</span>
+        </button>
+        <button class="filter-btn" id="btn-alta" onclick="filtrarJogos('alta')">
+            <span style="color:var(--elite-led)">Alta</span><span class="count" id="count-alta">0</span>
+        </button>
+        <button class="filter-btn" id="btn-desvio" onclick="filtrarJogos('desvio')">
+            <span style="color:var(--rara-led)">Desvios</span><span class="count" id="count-desvio">0</span>
+        </button>
+    </div>
 
     <div id="jogos-area" style="width: 100%;"></div>
 
@@ -106,6 +156,8 @@
             [31,32,33,34,35,41,42,43,44,45,51,52,53,54,55],
             [36,37,38,39,40,46,47,48,49,50,56,57,58,59,60]
         ];
+
+        let counts = { todos: 0, elite: 0, alta: 0, desvio: 0 };
 
         function desenharGrade(id, marcados = []) {
             const container = document.getElementById(id);
@@ -122,9 +174,12 @@
         }
 
         function executarSistema() {
+            counts = { todos: 24, elite: 0, alta: 0, desvio: 0 };
             let selecionadasQ = [];
             const area = document.getElementById('jogos-area');
+            const bar = document.getElementById('filter-bar');
             area.innerHTML = '';
+            bar.style.display = 'grid';
 
             quadrantes.forEach((q) => {
                 let s = [...q].sort(() => Math.random() - 0.5);
@@ -141,44 +196,51 @@
             for(let i=1; i<=24; i++) {
                 let jogo = gerarJogoValidado(selecionadasQ);
                 let audit = calcularAuditoria(jogo);
-                const idMini = `mini-${i}`;
-
-                // Definir Cor pelo Nível de Confiança
-                let statusColor = "";
-                let glow = "";
-                if(audit.score >= 90) { 
-                    statusColor = "#10b981"; // Verde
-                    glow = "rgba(16, 185, 129, 0.4)";
-                } else if(audit.score >= 75) { 
-                    statusColor = "#f59e0b"; // Amarelo
-                    glow = "rgba(245, 158, 11, 0.4)";
-                } else { 
-                    statusColor = "#ef4444"; // Vermelho
-                    glow = "rgba(239, 68, 68, 0.4)";
-                }
-
-                area.innerHTML += `
-                    <div class="volante-card">
-                        <div class="header-jogo">
-                            <span>VOLANTE #0${i}</span>
-                            <span style="color:${statusColor}; text-shadow: 0 0 10px ${glow}">${audit.score}% CONFIANÇA</span>
-                        </div>
-                        <div class="conf-panel">
-                            <div class="conf-bar-bg">
-                                <div class="conf-bar-fill" style="width:${audit.score}%; background:${statusColor}; box-shadow: 0 0 15px ${glow}"></div>
-                            </div>
-                            <div class="audit-grid">
-                                <div class="audit-item"><span class="audit-label">Paridade: ${audit.pares}P/${audit.impares}I</span><span class="audit-value" style="color:${statusColor}">${audit.paridadeFreq}</span></div>
-                                <div class="audit-item"><span class="audit-label">Soma: ${audit.soma}</span><span class="audit-value" style="color:${statusColor}">${audit.somaStatus}</span></div>
-                                <div class="audit-item"><span class="audit-label">Cobertura 4-Quadrantes</span><span class="audit-value" style="color:${statusColor}">Auditado</span></div>
-                                <div class="audit-item"><span class="audit-label">Dispersão de Linhas</span><span class="audit-value" style="color:${statusColor}">Consistente</span></div>
-                            </div>
-                        </div>
-                        <div class="cruz-container" id="${idMini}"></div>
-                        <button class="btn-usar" onclick="toggleStatus(this)">REGISTRAR APOSTA</button>
-                    </div>`;
-                setTimeout(() => desenharGrade(idMini, jogo), 50);
+                
+                const cat = audit.score >= 90 ? "elite" : (audit.score >= 75 ? "alta" : "desvio");
+                counts[cat]++;
+                
+                renderizarCard(i, jogo, audit, cat);
             }
+            atualizarContadores();
+        }
+
+        function atualizarContadores() {
+            document.getElementById('count-todos').innerText = counts.todos;
+            document.getElementById('count-elite').innerText = counts.elite;
+            document.getElementById('count-alta').innerText = counts.alta;
+            document.getElementById('count-desvio').innerText = counts.desvio;
+        }
+
+        function renderizarCard(i, jogo, audit, category) {
+            const area = document.getElementById('jogos-area');
+            const statusColor = category === "elite" ? "#10b981" : (category === "alta" ? "#f59e0b" : "#ef4444");
+
+            area.innerHTML += `
+                <div class="volante-card" data-category="${category}" id="card-${i}">
+                    <div class="header-jogo">
+                        <span>VOLANTE #0${i}</span>
+                        <span style="color:${statusColor}">${audit.score}% CONF.</span>
+                    </div>
+                    <div class="conf-panel">
+                        <div class="conf-bar-bg"><div class="conf-bar-fill" style="width:${audit.score}%; background:${statusColor}; box-shadow: 0 0 10px ${statusColor}66"></div></div>
+                        <div class="audit-item"><span style="opacity:0.6">Paridade: ${audit.pares}P/${audit.impares}I</span><span style="color:${statusColor}">${audit.paridadeFreq}</span></div>
+                        <div class="audit-item"><span style="opacity:0.6">Soma: ${audit.soma}</span><span style="color:${statusColor}">${audit.somaStatus}</span></div>
+                    </div>
+                    <div class="cruz-container" id="mini-${i}"></div>
+                    <button class="btn-usar" onclick="toggleStatus(this)">REGISTRAR APOSTA</button>
+                </div>`;
+            setTimeout(() => desenharGrade(`mini-${i}`, jogo), 50);
+        }
+
+        function filtrarJogos(filtro) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${filtro}`).classList.add('active');
+
+            document.querySelectorAll('.volante-card').forEach(card => {
+                const cat = card.getAttribute('data-category');
+                card.classList.toggle('hidden', filtro !== 'todos' && cat !== filtro);
+            });
         }
 
         function gerarJogoValidado(pools) {
@@ -190,31 +252,23 @@
         }
 
         function calcularAuditoria(nums) {
-            let score = 55; // Base
+            let score = 55;
             let pares = nums.filter(n => n % 2 === 0).length;
-            let impares = 6 - pares;
             let soma = nums.reduce((a, b) => a + b, 0);
-            
-            let pFreq = "";
-            if (pares === 3) { pFreq = "31% (Ideal)"; score += 25; }
-            else if (pares === 2 || pares === 4) { pFreq = "24% (Boa)"; score += 18; }
-            else { pFreq = "8% (Rara)"; score += 5; }
-
-            let sStatus = "";
-            if (soma >= 150 && soma <= 215) { sStatus = "Excelente"; score += 20; }
-            else if (soma >= 120 && soma <= 240) { sStatus = "Aceitável"; score += 10; }
-            else { sStatus = "Desvio"; score += 2; }
-
-            return { score: Math.min(score, 100), pares, impares, paridadeFreq: pFreq, soma, somaStatus: sStatus };
+            let pFreq = pares === 3 ? "31%" : (pares === 2 || pares === 4 ? "24%" : "8%");
+            score += pares === 3 ? 25 : (pares === 2 || pares === 4 ? 18 : 5);
+            let sStatus = (soma >= 150 && soma <= 215) ? "Ideal" : "Desvio";
+            score += (soma >= 150 && soma <= 215) ? 20 : 5;
+            return { score: Math.min(score, 100), pares, impares: 6-pares, paridadeFreq: pFreq, soma, somaStatus: sStatus };
         }
 
         function toggleStatus(btn) {
-            const card = btn.closest('.volante-card');
-            const isUsado = card.classList.toggle('usado');
-            btn.innerText = isUsado ? "REATIVAR" : "REGISTRAR APOSTA";
+            btn.closest('.volante-card').classList.toggle('usado');
+            btn.innerText = btn.closest('.volante-card').classList.contains('usado') ? "REATIVAR" : "REGISTRAR APOSTA";
         }
 
         desenharGrade('matriz-main');
     </script>
 </body>
 </html>
+
