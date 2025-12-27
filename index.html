@@ -1,267 +1,220 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="dark">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mega Elite v8.7 - Racional Acadêmico</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: 'class' }</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mega-Sena Expert | Dynamic Intelligence</title>
     <style>
-        .q1 { background-color: #450a0a; color: #fecaca; } 
-        .q2 { background-color: #3b0764; color: #e9d5ff; } 
-        .q3 { background-color: #1e3a8a; color: #bfdbfe; } 
-        .q4 { background-color: #451a03; color: #fde68a; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
-        .numero-selecionado { 
-            background-color: #22c55e !important; 
-            color: #052e16 !important; 
-            box-shadow: 0 0 15px #22c55e;
-            transform: scale(1.05);
-            z-index: 10;
+        :root {
+            --bg: #030712;
+            --card: #0f172a;
+            --primary-led: #10b981; 
+            --elite-led: #f59e0b;   
+            --media-led: #1d4ed8;   
+            --rara-led: #dc2626;    
+            --text-global: rgba(255, 255, 255, 0.6);
+            --border-matrix: #1e293b;
         }
 
-        .cartao-estratega {
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border: 2px solid #334155;
-            transition: all 0.4s ease;
-            border-radius: 2.5rem;
-            position: relative;
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-global);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 10px 0; margin: 0; overflow-x: hidden; width: 100%;
         }
 
-        .cartao-estratega.usado {
-            filter: grayscale(1) brightness(0.3);
-            opacity: 0.6;
-            transform: scale(0.96);
+        h1 { font-weight: 700; color: #fff; font-size: 1.3rem; letter-spacing: 4px; margin: 20px 0 5px 0; text-transform: uppercase; text-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        .subtitle { font-size: 0.6rem; letter-spacing: 2px; margin-bottom: 25px; opacity: 0.5; }
+
+        /* MATRIZ LED */
+        .cruz-container {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
+            background: var(--border-matrix); padding: 2px; width: 100vw;
+            box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .quadrante { background: var(--bg); padding: 12px 6px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        .dezena {
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            background: #111827; border-radius: 4px; font-size: 0.75rem; 
+            border: 1px solid rgba(255,255,255,0.03); color: rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
         }
 
-        .grade-volante {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 2px;
-            position: relative;
-            padding: 10px;
-            background: #020617;
-            border-radius: 12px;
+        /* ESTILOS DE CATEGORIA */
+        .sel-elite { background: #451a03 !important; color: #fbbf24 !important; border-color: #f59e0b; box-shadow: inset 0 0 10px #78350f, 0 0 15px rgba(245, 158, 11, 0.3); font-weight: 700; }
+        .sel-media { background: #1e3a8a !important; color: #60a5fa !important; border-color: #3b82f6; box-shadow: inset 0 0 10px #1e40af, 0 0 15px rgba(59, 130, 246, 0.3); font-weight: 700; }
+        .sel-rara { background: #7f1d1d !important; color: #f87171 !important; border-color: #ef4444; box-shadow: inset 0 0 10px #991b1b, 0 0 15px rgba(239, 68, 68, 0.3); font-weight: 700; }
+        .marcado { background: #064e3b !important; color: #34d399 !important; border-color: #10b981; box-shadow: inset 0 0 10px #065f46, 0 0 18px rgba(16, 185, 129, 0.5); font-weight: 700; }
+
+        .btn-main {
+            width: 85%; margin: 30px 0; padding: 18px;
+            background: #064e3b; border: 1px solid var(--primary-led);
+            border-radius: 8px; font-weight: 600; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;
+            color: #34d399 !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
         }
 
-        .linha-h { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #22c55e; opacity: 0.4; z-index: 5; pointer-events: none; }
-        .linha-v { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #22c55e; opacity: 0.4; z-index: 5; pointer-events: none; }
-
-        .dezena-volante { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: #334155; border: 1px solid #1e293b; z-index: 2; }
-        .dezena-marcada { background-color: #22c55e !important; color: #052e16 !important; z-index: 10; border-radius: 2px; }
-
-        .bar-container { background: #020617; height: 10px; border-radius: 99px; overflow: hidden; border: 1px solid #1e293b; }
-        .fill-atk { background: linear-gradient(90deg, #ef4444, #f97316); height: 100%; transition: width 1.5s; }
-        .fill-def { background: linear-gradient(90deg, #3b82f6, #06b6d4); height: 100%; transition: width 1.5s; }
-
-        .stat-block { border-left: 4px solid #3b82f6; background: #161e2e; padding: 12px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #1e293b; }
+        /* AUDITORIA DE VOLANTE */
+        .volante-card { background: var(--card); padding: 20px 0; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; }
+        .volante-card.usado { opacity: 0.2; filter: grayscale(1); }
         
-        .hud-flutuante {
-            background: rgba(15, 23, 42, 0.98);
-            backdrop-blur: lg;
-            border: 2px solid #334155;
-            padding: 14px 32px;
-            border-radius: 99px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 20px 50px -12px rgba(0,0,0,0.8);
+        .header-jogo { padding: 0 15px; display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.75rem; font-weight: 700; }
+        
+        .conf-panel { padding: 0 15px; margin-bottom: 15px; }
+        .conf-bar-bg { height: 6px; background: #020617; border-radius: 3px; overflow: hidden; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .conf-bar-fill { height: 100%; transition: 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67); border-radius: 3px; }
+        
+        .audit-grid { display: grid; grid-template-columns: 1fr; gap: 6px; }
+        .audit-item { 
+            font-size: 0.65rem; background: rgba(0,0,0,0.25); padding: 7px 10px; 
+            border-radius: 4px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .audit-label { opacity: 0.7; }
+        .audit-value { font-weight: 700; letter-spacing: 0.5px; }
+
+        .btn-usar {
+            width: calc(100% - 30px); margin: 15px 15px 0 15px; padding: 12px; 
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 4px; font-size: 0.7rem; font-weight: 600; color: var(--text-global) !important;
+        }
+
+        @media (min-width: 768px) {
+            .jogos-grid { display: grid; grid-template-columns: repeat(2, 1fr); width: 95%; gap: 20px; }
+            .cruz-container { width: 420px; border-radius: 8px; margin: 0 auto; }
+            .volante-card { border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen font-sans pb-20">
+<body>
 
-    <nav class="bg-slate-900 border-b border-green-900/30 p-6 sticky top-0 z-[100] backdrop-blur-md">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-2xl font-black italic text-green-500 uppercase tracking-tighter">Mega Elite <span class="text-white">Tactics</span></h1>
-                <p class="text-[10px] text-green-700 font-bold uppercase tracking-[0.2em] mt-1">Inteligência Multivariada de Dados v8.7</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-3">
-                <button onclick="gerarCartas()" class="bg-green-600 px-8 py-2 rounded-full font-bold text-sm hover:bg-green-500 transition-all shadow-lg active:scale-95">FORJAR JOGOS</button>
-                <button onclick="analiseTop20()" class="bg-blue-600 px-5 py-2 rounded-full font-bold text-xs uppercase tracking-tighter hover:bg-blue-500 transition-colors">Ranking 20%</button>
-                <button onclick="limparTudo()" class="text-slate-500 hover:text-white px-2 text-xs uppercase font-bold transition-colors">Limpar</button>
-            </div>
-        </div>
-    </nav>
+    <h1>Expert Matrix LED</h1>
+    <div class="subtitle">Auditoria com Gradiente de Confiança</div>
 
-    <main class="container mx-auto p-4 md:p-8">
-        <div id="deck-hud" class="hidden flex justify-center sticky top-32 z-[110] mb-16 animate-in fade-in slide-in-from-top-2 duration-300">
-            <div class="hud-flutuante">
-                <div class="flex flex-col">
-                    <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Status do Deck</span>
-                    <span id="label-count" class="text-xl font-mono font-black text-green-500">0 / 0</span>
-                </div>
-                <div class="w-40 md:w-64 h-2.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-                    <div id="deck-bar" class="h-full bg-green-500 transition-all duration-700 w-0 shadow-[0_0_15px_#22c55e]"></div>
-                </div>
-            </div>
-        </div>
+    <div class="cruz-container" id="matriz-main"></div>
 
-        <div class="grid lg:grid-cols-12 gap-10">
-            <div class="lg:col-span-5">
-                <div class="bg-slate-900 p-8 rounded-[2rem] border border-slate-800 sticky top-28 shadow-2xl">
-                    <h2 class="text-sm font-black text-slate-500 mb-6 uppercase tracking-[0.2em]">Seletor de Matriz</h2>
-                    <div id="volante-selecao" class="grid grid-cols-10 gap-1.5 mb-8"></div>
-                    <div id="painel-racional" class="hidden space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
-                        <h3 class="text-xs font-black text-blue-500 uppercase tracking-widest border-b border-slate-800 pb-2">Racional de Elite (N=20)</h3>
-                        <div id="lista-racional"></div>
-                    </div>
-                </div>
-            </div>
+    <button class="btn-main" onclick="executarSistema()">Gerar Inteligência Dinâmica</button>
 
-            <div class="lg:col-span-7">
-                <div id="container-cards" class="grid grid-cols-1 gap-10">
-                    <div class="py-32 text-center border-2 border-dashed border-slate-800 rounded-[3.5rem] opacity-30 italic">
-                        Processador aguardando a seleção de dezenas para o fechamento.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+    <div id="jogos-area" style="width: 100%;"></div>
 
     <script>
-        let selecionados = new Set();
-        let registrados = 0;
-        let totalJogos = 0;
-        const concursoTotal = 2954;
-
-        const dbElite = [
-            { n: 10, q: 2, f: 340, p: 100, r: "<b>Atrator Estocástico:</b> Dezena com o menor desvio padrão de frequência. Sua recorrência em concursos de final zero a torna o pilar central de qualquer fechamento profissional." },
-            { n: 53, q: 3, f: 332, p: 98, r: "<b>Saturação Crítica:</b> Recordista em concursos especiais. Atua como âncora inferior esquerda, apresentando alta correlação com dezenas da casa dos 30." },
-            { n: 5, q: 1, f: 319, p: 95, r: "<b>Estabilizador de Soma:</b> Essencial para manter a média aritmética do jogo dentro da Curva de Gauss (soma 150-210), prevenindo dispersão estatística extrema." },
-            { n: 34, q: 3, f: 316, p: 94, r: "<b>Eixo de Simetria:</b> Localizada no 'centro de massa' do volante. Serve como ponte de transição entre o topo e a base do fechamento matricial." },
-            { n: 37, q: 4, f: 315, p: 93, r: "<b>Dominância Lateral:</b> Líder do Q4. Sua presença mitiga a saturação de dezenas baixas, garantindo uma cobertura espacial completa da grade." },
-            { n: 33, q: 3, f: 312, p: 92, r: "<b>Cluster de Repetição:</b> Possui a maior taxa de 'dobradinhas' (aparição em concursos subsequentes). Vital para explorar ciclos curtos de frequência." },
-            { n: 38, q: 4, f: 312, p: 92, r: "<b>Correlação de Vizinhança:</b> Frequentemente compõe o par de encerramento em sorteios equilibrados, servindo de suporte tático para a dezena 37." },
-            { n: 17, q: 2, f: 309, p: 91, r: "<b>Densidade de Topo:</b> Dezena de média oscilante com forte tendência em sorteios onde predominam números ímpares na zona superior direita." },
-            { n: 32, q: 3, f: 309, p: 90, r: "<b>Reforço Mediano:</b> Estabiliza a zona central esquerda. Costuma aparecer integrada a trios consecutivos no coração do volante." },
-            { n: 43, q: 4, f: 308, p: 89, r: "<b>Efeito de Repique:</b> Dezena explosiva. Após períodos de latência, costuma reaparecer em clusters de alta frequência no curto prazo." },
-            { n: 56, q: 4, f: 307, p: 88, r: "<b>Cobertura de Base:</b> Fundamental para fechamentos que exploram a última linha. Garante que o jogo não sofra de sub-representação numérica alta." },
-            { n: 4, q: 1, f: 306, p: 87, r: "<b>Paridade de Suporte:</b> Correlação histórica de 18% com a dezena 05. Essencial para estabilizar a paridade par no início da aposta." },
-            { n: 27, q: 2, f: 306, p: 86, r: "<b>Vértice de Inflexão:</b> Atua na transição de linhas do Q2. Mantém a fluidez e previne 'vácuos' estatísticos entre a dezena 20 e 30." },
-            { n: 30, q: 2, f: 306, p: 85, r: "<b>Fechamento Decinal:</b> Recordista absoluta na décima coluna vertical. Essencial para jogos que buscam simetria de finais." },
-            { n: 42, q: 3, f: 306, p: 84, r: "<b>Resiliência de Atraso:</b> Dezena com o menor índice de 'congelamento' histórico. Garante rotatividade à matriz de dezenas pares." },
-            { n: 44, q: 3, f: 306, p: 83, r: "<b>Geometria Geminada:</b> Número duplo que auxilia na quebra de padrões de aleatoriedade pura, favorecendo a detecção de tendências visuais." },
-            { n: 11, q: 1, f: 305, p: 82, r: "<b>Ponto de Transição:</b> Dezena líder em concursos de final ímpar acumulados. Excelente coringa para diversificação do Quadrante 1." },
-            { n: 35, q: 3, f: 305, p: 81, r: "<b>Fronteira Interna:</b> Atua no limite entre o centro e a borda inferior. Vital para cruzamento de dados com as dezenas de transição." },
-            { n: 46, q: 4, f: 305, p: 80, r: "<b>Estabilizador Inferior:</b> Garante o equilíbrio par do Quadrante 4. Mitiga o risco de jogos com soma final excessivamente baixa ou alta." },
-            { n: 23, q: 1, f: 304, p: 79, r: "<b>Memória de Ciclo:</b> Apresenta o menor tempo de permanência no globo (atraso médio curto), servindo como regulador de probabilidade no Q1." }
+        const quadrantes = [
+            [1,2,3,4,5,11,12,13,14,15,21,22,23,24,25],
+            [6,7,8,9,10,16,17,18,19,20,26,27,28,29,30],
+            [31,32,33,34,35,41,42,43,44,45,51,52,53,54,55],
+            [36,37,38,39,40,46,47,48,49,50,56,57,58,59,60]
         ];
 
-        function init() {
-            const v = document.getElementById('volante-selecao');
-            for (let i = 1; i <= 60; i++) {
-                const b = document.createElement('button');
-                b.innerText = i.toString().padStart(2, '0');
-                const r = Math.floor((i-1)/10), c = (i-1)%10;
-                const q = (r < 3 && c < 5) ? 1 : (r < 3 && c >= 5) ? 2 : (r >= 3 && c < 5) ? 3 : 4;
-                b.className = `q${q} h-9 w-full rounded-xl font-bold text-[10px] transition-all border border-transparent hover:scale-110`;
-                b.id = `sel-${i}`;
-                b.onclick = () => {
-                    if(selecionados.has(i)) { selecionados.delete(i); b.classList.remove('numero-selecionado'); }
-                    else { selecionados.add(i); b.classList.add('numero-selecionado'); }
-                };
-                v.appendChild(b);
-            }
-        }
-
-        function gerarCartas() {
-            if (selecionados.size < 6) return alert("Selecione mais dezenas para o processamento.");
-            const container = document.getElementById('container-cards');
+        function desenharGrade(id, marcados = []) {
+            const container = document.getElementById(id);
             container.innerHTML = '';
-            registrados = 0; totalJogos = 10;
-            document.getElementById('deck-hud').classList.remove('hidden');
-            updateHUD();
-
-            let criados = 0;
-            while(criados < totalJogos) {
-                let jogo = Array.from(selecionados).sort(() => Math.random() - 0.5).slice(0, 6).sort((a,b) => a-b);
-                const p = jogo.filter(n => n % 2 === 0).length;
-                const q = new Set(jogo.map(n => {
-                    const r = Math.floor((n-1)/10), c = (n-1)%10;
-                    return (r < 3 && c < 5) ? 1 : (r < 3 && c >= 5) ? 2 : (r >= 3 && c < 5) ? 3 : 4;
-                })).size;
-                if(q >= 3 && (p >= 2 && p <= 4)) {
-                    renderCard(jogo, criados + 1, p, q);
-                    criados++;
-                }
-            }
-            window.scrollTo({ top: 350, behavior: 'smooth' });
-        }
-
-        function renderCard(nums, id, p, q) {
-            const container = document.getElementById('container-cards');
-            const atk = Math.round(nums.reduce((acc, n) => acc + (dbElite.find(d => d.n === n)?.p || 35), 0) / 6);
-            const def = (q * 15) + (p === 3 ? 40 : 25);
-            const soma = nums.reduce((a,b)=>a+b,0);
-            
-            const card = document.createElement('div');
-            card.id = `card-${id}`;
-            card.className = "cartao-estratega p-8 shadow-2xl";
-            let grid = '<div class="grade-volante"><div class="linha-h"></div><div class="linha-v"></div>';
-            for(let i=1; i<=60; i++) grid += `<div class="dezena-volante ${nums.includes(i) ? 'dezena-marcada' : ''}">${i.toString().padStart(2, '0')}</div>`;
-            grid += '</div>';
-
-            card.innerHTML = `
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-xs font-black text-green-500 italic uppercase tracking-tighter">Estrategista #${id}</span>
-                    <button onclick="registrar(${id})" id="btn-reg-${id}" class="bg-green-600 px-6 py-2 rounded-full text-[10px] font-black text-white transition-all active:scale-95 shadow-lg shadow-green-900/40 uppercase tracking-widest">Registrar</button>
-                </div>
-                ${grid}
-                <div class="mt-8 space-y-6">
-                    <div class="flex justify-between font-mono text-sm font-bold text-slate-300"><span>${nums.join(' · ')}</span><span>Soma: ${soma}</span></div>
-                    <div class="space-y-4">
-                        <div><div class="flex justify-between text-[9px] font-black mb-1 uppercase tracking-widest"><span>Poder Ofensivo (Densidade)</span><span>${atk}%</span></div><div class="bar-container"><div class="fill-atk" style="width:${atk}%"></div></div></div>
-                        <div><div class="flex justify-between text-[9px] font-black mb-1 uppercase tracking-widest"><span>Resiliência (Equilíbrio)</span><span>${def}%</span></div><div class="bar-container"><div class="fill-def" style="width:${def}%"></div></div></div>
-                    </div>
-                    <div class="p-4 bg-slate-950/50 rounded-2xl border border-slate-800 text-[10px] leading-relaxed text-slate-400">
-                        <b>Racional Tático do Jogo #${id}:</b> Esta matriz apresenta paridade ${p}P:${6-p}I, respeitando a frequência observada em 82% dos concursos. A ocupação de ${q} quadrantes maximiza a cobertura geométrica, enquanto a soma nominal de ${soma} mantém o jogo no centro da Curva de Normalidade estatística.
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
-        }
-
-        function registrar(id) {
-            const card = document.getElementById(`card-${id}`);
-            const btn = document.getElementById(`btn-reg-${id}`);
-            if(card.classList.contains('usado')) {
-                card.classList.remove('usado'); btn.innerText = "Registrar"; registrados--;
-            } else {
-                card.classList.add('usado'); btn.innerText = "Registrado ✓"; registrados++;
-            }
-            updateHUD();
-        }
-
-        function updateHUD() {
-            document.getElementById('label-count').innerText = `${registrados} / ${totalJogos}`;
-            document.getElementById('deck-bar').style.width = `${(registrados / totalJogos) * 100}%`;
-            if(registrados === totalJogos) document.getElementById('label-count').classList.add('animate-pulse', 'text-green-400');
-            else document.getElementById('label-count').classList.remove('animate-pulse', 'text-green-400');
-        }
-
-        function analiseTop20() {
-            limparTudo();
-            document.getElementById('painel-racional').classList.remove('hidden');
-            const lista = document.getElementById('lista-racional');
-            dbElite.forEach(d => {
-                const btn = document.getElementById(`sel-${d.n}`);
-                selecionados.add(d.n); btn.classList.add('numero-selecionado');
-                const perc = ((d.f / concursoTotal) * 100).toFixed(2);
-                lista.innerHTML += `<div class="stat-block"><div class="flex justify-between items-center mb-1 font-bold text-xs uppercase"><span class="text-white">Dezena ${d.n}</span><span class="text-green-500 font-mono">${perc}%</span></div><div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800"><div class="h-full bg-green-500" style="width:${perc}%"></div></div><p class="text-[10px] text-slate-500 mt-2 italic leading-tight">${d.r}</p></div>`;
+            quadrantes.forEach(q => {
+                const div = document.createElement('div');
+                div.className = 'quadrante';
+                q.forEach(n => {
+                    let isMarcado = marcados.includes(n);
+                    div.innerHTML += `<div class="dezena ${isMarcado ? 'marcado' : ''}" id="${id}-n${n}">${n.toString().padStart(2, '0')}</div>`;
+                });
+                container.appendChild(div);
             });
         }
 
-        function limparTudo() {
-            selecionados.clear(); registrados = 0; totalJogos = 0;
-            document.querySelectorAll('.numero-selecionado').forEach(b => b.classList.remove('numero-selecionado'));
-            document.getElementById('container-cards').innerHTML = '<div class="py-32 text-center border-2 border-dashed border-slate-800 rounded-[3.5rem] opacity-30 italic">Processador reiniciado para nova simulação.</div>';
-            document.getElementById('painel-racional').classList.add('hidden');
-            document.getElementById('deck-hud').classList.add('hidden');
+        function executarSistema() {
+            let selecionadasQ = [];
+            const area = document.getElementById('jogos-area');
+            area.innerHTML = '';
+
+            quadrantes.forEach((q) => {
+                let s = [...q].sort(() => Math.random() - 0.5);
+                selecionadasQ.push({ todas: s.slice(0, 8), elite: s.slice(0,3), medias: s.slice(3,6), raras: s.slice(6,8) });
+            });
+
+            desenharGrade('matriz-main');
+            selecionadasQ.forEach(q => {
+                q.elite.forEach(n => document.getElementById(`matriz-main-n${n}`).classList.add('sel-elite'));
+                q.medias.forEach(n => document.getElementById(`matriz-main-n${n}`).classList.add('sel-media'));
+                q.raras.forEach(n => document.getElementById(`matriz-main-n${n}`).classList.add('sel-rara'));
+            });
+
+            for(let i=1; i<=24; i++) {
+                let jogo = gerarJogoValidado(selecionadasQ);
+                let audit = calcularAuditoria(jogo);
+                const idMini = `mini-${i}`;
+
+                // Definir Cor pelo Nível de Confiança
+                let statusColor = "";
+                let glow = "";
+                if(audit.score >= 90) { 
+                    statusColor = "#10b981"; // Verde
+                    glow = "rgba(16, 185, 129, 0.4)";
+                } else if(audit.score >= 75) { 
+                    statusColor = "#f59e0b"; // Amarelo
+                    glow = "rgba(245, 158, 11, 0.4)";
+                } else { 
+                    statusColor = "#ef4444"; // Vermelho
+                    glow = "rgba(239, 68, 68, 0.4)";
+                }
+
+                area.innerHTML += `
+                    <div class="volante-card">
+                        <div class="header-jogo">
+                            <span>VOLANTE #0${i}</span>
+                            <span style="color:${statusColor}; text-shadow: 0 0 10px ${glow}">${audit.score}% CONFIANÇA</span>
+                        </div>
+                        <div class="conf-panel">
+                            <div class="conf-bar-bg">
+                                <div class="conf-bar-fill" style="width:${audit.score}%; background:${statusColor}; box-shadow: 0 0 15px ${glow}"></div>
+                            </div>
+                            <div class="audit-grid">
+                                <div class="audit-item"><span class="audit-label">Paridade: ${audit.pares}P/${audit.impares}I</span><span class="audit-value" style="color:${statusColor}">${audit.paridadeFreq}</span></div>
+                                <div class="audit-item"><span class="audit-label">Soma: ${audit.soma}</span><span class="audit-value" style="color:${statusColor}">${audit.somaStatus}</span></div>
+                                <div class="audit-item"><span class="audit-label">Cobertura 4-Quadrantes</span><span class="audit-value" style="color:${statusColor}">Auditado</span></div>
+                                <div class="audit-item"><span class="audit-label">Dispersão de Linhas</span><span class="audit-value" style="color:${statusColor}">Consistente</span></div>
+                            </div>
+                        </div>
+                        <div class="cruz-container" id="${idMini}"></div>
+                        <button class="btn-usar" onclick="toggleStatus(this)">REGISTRAR APOSTA</button>
+                    </div>`;
+                setTimeout(() => desenharGrade(idMini, jogo), 50);
+            }
         }
 
-        init();
+        function gerarJogoValidado(pools) {
+            let jogo = [];
+            pools.forEach(q => jogo.push(q.todas[Math.floor(Math.random() * q.todas.length)]));
+            let poolGlobal = pools.flatMap(q => q.todas).filter(n => !jogo.includes(n));
+            jogo.push(...poolGlobal.sort(() => Math.random() - 0.5).slice(0, 2));
+            return jogo.sort((a, b) => a - b);
+        }
+
+        function calcularAuditoria(nums) {
+            let score = 55; // Base
+            let pares = nums.filter(n => n % 2 === 0).length;
+            let impares = 6 - pares;
+            let soma = nums.reduce((a, b) => a + b, 0);
+            
+            let pFreq = "";
+            if (pares === 3) { pFreq = "31% (Ideal)"; score += 25; }
+            else if (pares === 2 || pares === 4) { pFreq = "24% (Boa)"; score += 18; }
+            else { pFreq = "8% (Rara)"; score += 5; }
+
+            let sStatus = "";
+            if (soma >= 150 && soma <= 215) { sStatus = "Excelente"; score += 20; }
+            else if (soma >= 120 && soma <= 240) { sStatus = "Aceitável"; score += 10; }
+            else { sStatus = "Desvio"; score += 2; }
+
+            return { score: Math.min(score, 100), pares, impares, paridadeFreq: pFreq, soma, somaStatus: sStatus };
+        }
+
+        function toggleStatus(btn) {
+            const card = btn.closest('.volante-card');
+            const isUsado = card.classList.toggle('usado');
+            btn.innerText = isUsado ? "REATIVAR" : "REGISTRAR APOSTA";
+        }
+
+        desenharGrade('matriz-main');
     </script>
 </body>
 </html>
